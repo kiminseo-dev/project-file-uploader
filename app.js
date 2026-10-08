@@ -4,7 +4,10 @@ import { prisma } from "./lib/prisma.js";
 const PORT = process.env.PORT || 3000;
 
 const app = express();
-import { indexRouter } from "./routes/indexRouter.js"
+import { indexRouter } from "./routes/indexRouter.js";
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs");
 
