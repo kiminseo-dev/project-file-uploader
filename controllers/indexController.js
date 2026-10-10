@@ -1,35 +1,62 @@
 import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma.js";
+import passport from "passport";
 
 export function getHomePage(req, res) {
-    res.render("index");
+  console.log(req.user);
+  res.render("index", { user: req.user });
 }
 
 export function getSignUpPage(req, res) {
-    res.render("sign-up");
+  if (req.user) {
+    return res.status(403).send("Log out first");
+  }
+
+  res.render("sign-up");
 }
 
 export async function createUser(req, res) {
-    try {
-        const user = req.body;
-        // hashing password
-        const hashedPassword = await bcrypt.hash(user.password, 10);
+  if (req.user) {
+    return res.status(403).send("Log out first");
+  }
 
-        // adding user to db
-        await prisma.user.create({
-            data: {
-                name: user.name,
-                username: user.username,
-                password: hashedPassword,
-            }
-        });
+  try {
+    const user = req.body;
+    // hashing password
+    const hashedPassword = await bcrypt.hash(user.password, 10);
 
-        console.log(await prisma.user.findMany());
+    // adding user to db
+    await prisma.user.create({
+      data: {
+        name: user.name,
+        username: user.username,
+        password: hashedPassword,
+      },
+    });
 
-        res.redirect("/");
-    } catch (err) {
-        console.error(err);
-        // server error
-        res.status(500).send("Something went wrong");
-    }
+    console.log(await prisma.user.findMany());
+
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    // server error
+    res.status(500).send("Something went wrong");
+  }
+}
+
+export function getLoginPage(req, res) {
+  if (req.user) {
+    return res.status(403).send("Log out first");
+  }
+  res.render("log-in");
+}
+
+export function authenticateUser(req, res, next) {
+  if (req.user) {
+    return res.status(403).send("Log out first");
+  }
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/log-in",
+  })(req, res, next);
 }

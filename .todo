@@ -2,4 +2,5 @@ Skeleton:
     ✔ postresql setup @started(26-10-05 20:36) @done(26-10-05 20:37) @lasted(1m29s)
     ✔ prisma orm setup @started(26-10-05 20:37) @done(26-10-05 20:54) @lasted(17m23s)
     ✔ Sketch Database tables @done(26-10-08 17:47)
-    ☐ authentication setup @started(26-10-08 17:47)
+    ✔ authentication setup @started(26-10-08 17:47) @done(26-10-10 21:57) @lasted(2d4h10m4s)
+    ☐ 

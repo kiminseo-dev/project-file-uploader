@@ -6,7 +6,11 @@
     <title>Home</title>
   </head>
   <body>
+    <h1><%= user ? user.name : "Guest" %></h1>
     <a href="/log-in">Log in</a>
     <a href="/sign-up">Sign up</a>
+    <form action="/log-out" method="post">
+      <button type="submit">Log Out</button>
+    </form>
   </body>
 </html>
