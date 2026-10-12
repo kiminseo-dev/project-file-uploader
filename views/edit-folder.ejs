@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit folder</title>
+  </head>
+  <body>
+    <form action="/folders/<%= folder.id %>/edit" method="post">
+      <label for="name">Name:</label>
+      <input
+        name="name"
+        id="name"
+        type="text"
+        value="<%= folder.name %>"
+        required
+      />
+      <button type="submit">Edit</button>
+    </form>
+  </body>
+</html>

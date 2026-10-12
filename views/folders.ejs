@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Folders</title>
+  </head>
+  <body>
+    <a href="/folders/new"><strong>Create New Folder</strong></a>
+    <br>
+    <% folders.forEach(folder => { %>
+        <fieldset>
+        <a href="/folders/<%= folder.id %>"><%= folder.name %></a>
+        <br>
+        <a href="/folders/<%= folder.id %>/edit">Edit</a>
+        <br>
+        <form action="/folders/<%= folder.id %>/delete" method="post">
+            <button type="submit">Delete</button>
+        </form>
+        </fieldset>
+    <% })%>
+  </body>
+</html>

@@ -13,6 +13,7 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 import { indexRouter } from "./routes/indexRouter.js";
+import { folderRouter } from "./routes/folderRouter.js";
 
 app.use(express.json()); // body convert to json
 app.use(express.urlencoded({ extended: true })); // allows extended data
@@ -21,7 +22,7 @@ app.set("view engine", "ejs");
 
 //* this uses dependency "express-session"
 //* session() is the middleware used with app.use()
-// the object are configurations 
+// the object are configurations
 app.use(
   session({
     //* PrismaSessionStore dependency used here
@@ -38,7 +39,7 @@ app.use(
 
     // avoids saving unchanged sessions
     resave: false,
-    
+
     // avoids saving new sessions that haven't been modified
     saveUninitialized: false,
   }),
@@ -49,7 +50,7 @@ app.use(passport.initialize()); // sets up passport functions
 app.use(passport.session()); // remembers who is logged in from the different requests
 
 //* LocalStrategy is used here
-// provides the way to authenticate a user with username and password 
+// provides the way to authenticate a user with username and password
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
@@ -105,6 +106,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 app.use("/", indexRouter);
+app.use("/folders", folderRouter);
 
 app.listen(PORT, () => {
   console.log("app is on", `http://localhost:${PORT}/`);

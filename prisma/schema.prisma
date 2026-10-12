@@ -12,16 +12,32 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  name     String @db.VarChar(100)
-  username String @unique @db.VarChar(100)
-  password String @db.VarChar(100)
-}
-
 model Session {
   id        String   @id
   sid       String   @unique
   data      String   @db.Text
   expiresAt DateTime
+}
+
+//* User -> Folder one to many
+model User {
+  id       Int    @id @default(autoincrement())
+  name     String @db.VarChar(100)
+  username String @unique @db.VarChar(100)
+  password String @db.VarChar(100)
+
+  // all folders for this user
+  folder Folder[]
+}
+
+model Folder {
+  id     Int    @id @default(autoincrement())
+  name   String
+  userId Int
+
+  // relation between each folder to one user 
+  user User @relation(fields: [userId], references: [id])
+  
+  // userId, name should be unique
+  @@unique([userId, name])
 }

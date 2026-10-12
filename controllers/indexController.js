@@ -3,7 +3,6 @@ import { prisma } from "../lib/prisma.js";
 import passport from "passport";
 
 export function getHomePage(req, res) {
-  console.log(req.user);
   res.render("index", { user: req.user });
 }
 
@@ -40,6 +39,7 @@ export async function createUser(req, res) {
   } catch (err) {
     console.error(err);
     // server error
+    //Todo: add proper error handling
     res.status(500).send("Something went wrong");
   }
 }
