@@ -2,23 +2,27 @@ import bcrypt from "bcrypt";
 import { prisma } from "../lib/prisma.js";
 import passport from "passport";
 
+// get home page
 export function getHomePage(req, res) {
   res.render("index", { user: req.user });
 }
 
-export function getSignUpPage(req, res) {
-  if (req.user) {
-    return res.status(403).send("Log out first");
+export function notAuthenticated(req, res, next) {
+  // user cant be logged int
+  if (req.isAuthenticated()) {
+    return res.status(403).send("Must log out first");
   }
 
+  next();
+}
+
+// get sign up page
+export function getSignUpPage(req, res) {
   res.render("sign-up");
 }
 
+// creating a user
 export async function createUser(req, res) {
-  if (req.user) {
-    return res.status(403).send("Log out first");
-  }
-
   try {
     const user = req.body;
     // hashing password
@@ -44,17 +48,13 @@ export async function createUser(req, res) {
   }
 }
 
+// get log in page
 export function getLoginPage(req, res) {
-  if (req.user) {
-    return res.status(403).send("Log out first");
-  }
   res.render("log-in");
 }
 
+// authenticate user
 export function authenticateUser(req, res, next) {
-  if (req.user) {
-    return res.status(403).send("Log out first");
-  }
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/log-in",

@@ -1,15 +1,35 @@
 import { Router } from "express";
 const indexRouter = Router();
-import * as indexController from "../controllers/indexController.js"
+import * as indexController from "../controllers/indexController.js";
 
+// home page
 indexRouter.get("/", indexController.getHomePage);
 
-indexRouter.get("/sign-up", indexController.getSignUpPage);
-indexRouter.post("/sign-up", indexController.createUser);
+// sign up page
+indexRouter.get(
+  "/sign-up",
+  indexController.notAuthenticated,
+  indexController.getSignUpPage,
+);
+indexRouter.post(
+  "/sign-up",
+  indexController.notAuthenticated,
+  indexController.createUser,
+);
 
-indexRouter.get("/log-in", indexController.getLoginPage);
-indexRouter.post("/log-in", indexController.authenticateUser);
+// logging in
+indexRouter.get(
+  "/log-in",
+  indexController.notAuthenticated,
+  indexController.getLoginPage,
+);
+indexRouter.post(
+  "/log-in",
+  indexController.notAuthenticated,
+  indexController.authenticateUser,
+);
 
+// logging out
 indexRouter.post("/log-out", (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
@@ -18,4 +38,4 @@ indexRouter.post("/log-out", (req, res, next) => {
   });
 });
 
-export { indexRouter }
+export { indexRouter };
