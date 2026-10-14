@@ -226,4 +226,20 @@ export async function deleteFile(req, res) {
   res.redirect("/folders");
 }
 
-export async function downloadFile(req, res) {}
+export async function downloadFile(req, res) {
+  const file = await prisma.file.findFirst({
+    where: {
+      id: Number(req.params.fileId),
+      folder: {
+        userId: req.user.id,
+      },
+    },
+  });
+
+  if (!file) {
+    return res.status(404).send("File not found");
+  }
+
+  const filePath = path.join("uploads", file.storedName);
+  res.download(filePath, file.originalName);
+}
