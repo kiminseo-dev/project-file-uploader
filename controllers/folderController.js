@@ -1,4 +1,6 @@
 import { prisma } from "../lib/prisma.js";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 export function isAuthenticated(req, res, next) {
   // returns false if user is not authenticated
@@ -26,7 +28,6 @@ export async function getFolders(req, res) {
       },
     },
   });
-  console.log(files);
 
   res.render("folders", { folders, files });
 }
@@ -198,7 +199,31 @@ export async function uploadFolder(req, res) {
 }
 
 export async function deleteFile(req, res) {
-  
+  const file = await prisma.file.findFirst({
+    where: {
+      id: Number(req.params.fileId),
+      folder: {
+        userId: req.user.id,
+      },
+    },
+  });
+
+  if (!file) {
+    return res.status(404).send("File not found");
+  }
+
+  // file path name
+  const filePath = path.join("uploads", file.storedName);
+  // deletes the physical file
+  await fs.unlink(filePath);
+
+  await prisma.file.delete({
+    where: {
+      id: file.id,
+    },
+  });
+
+  res.redirect("/folders");
 }
 
 export async function downloadFile(req, res) {}

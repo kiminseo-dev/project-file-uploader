@@ -16,8 +16,10 @@
     <% files.forEach(file => { %>
       <fieldset>
         <legend><%= file.originalName %></legend>
+        <form action="/folders/files/<%= file.id %>/delete" method="post">
+          <button type="submit">Delete</button>
+        </form>
         <button>Download</button>
-        <button>Delete</button>
       </fieldset>
     <% }); %>
   </body>

@@ -41,4 +41,6 @@ folderRouter.post(
   folderController.uploadFolder,
 );
 
+folderRouter.post("/files/:fileId/delete", folderController.deleteFile);
+
 export { folderRouter };

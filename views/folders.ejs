@@ -30,9 +30,12 @@
     <% files.forEach(file => { %>
       <fieldset>
         <legend><%= file.originalName %></legend>
-        <button type="submit">Download</button>
 
-        <button>Delete</button>
+        <form action="/folders/files/<%= file.id %>/delete" method="post">
+          <button type="submit">Delete</button>
+        </form>
+
+        <button>Download</button>
       </fieldset>
     <% }); %>
 
