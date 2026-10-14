@@ -7,6 +7,13 @@
   </head>
   <body>
     <a href="/folders/new"><strong>Create New Folder</strong></a>
+
+    <form action="/folders/upload" method="POST" enctype="multipart/form-data">
+      <label for="file">Choose a file:</label>
+      <input type="file" id="file" name="file" required>
+      <button type="submit">Upload</button>
+    </form>
+
     <br>
     <% folders.forEach(folder => { %>
         <fieldset>
@@ -18,6 +25,16 @@
             <button type="submit">Delete</button>
         </form>
         </fieldset>
-    <% })%>
+    <% }); %>
+
+    <% files.forEach(file => { %>
+      <fieldset>
+        <legend><%= file.originalName %></legend>
+        <button type="submit">Download</button>
+
+        <button>Delete</button>
+      </fieldset>
+    <% }); %>
+
   </body>
 </html>

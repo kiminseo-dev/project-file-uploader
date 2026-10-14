@@ -27,17 +27,30 @@ model User {
   password String @db.VarChar(100)
 
   // all folders for this user
-  folder Folder[]
+  folders Folder[]
 }
 
 model Folder {
-  id     Int    @id @default(autoincrement())
+  id     Int     @id @default(autoincrement())
   name   String
+  isRoot Boolean @default(false)
   userId Int
 
   // relation between each folder to one user 
   user User @relation(fields: [userId], references: [id])
-  
+
+  files File[]
+
   // userId, name should be unique
   @@unique([userId, name])
+}
+
+model File {
+  id           Int      @id @default(autoincrement())
+  originalName String
+  storedName   String
+  size         Int
+  folderId     Int
+  folder       Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
 }

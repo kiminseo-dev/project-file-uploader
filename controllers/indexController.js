@@ -24,20 +24,24 @@ export function getSignUpPage(req, res) {
 // creating a user
 export async function createUser(req, res) {
   try {
-    const user = req.body;
     // hashing password
-    const hashedPassword = await bcrypt.hash(user.password, 10);
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
     // adding user to db
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
-        name: user.name,
-        username: user.username,
+        name: req.body.name,
+        username: req.body.username,
         password: hashedPassword,
+        // adding default root folder
+        folders: {
+          create: {
+            name: "Home",
+            isRoot: true,
+          }
+        }
       },
     });
-
-    console.log(await prisma.user.findMany());
 
     res.redirect("/");
   } catch (err) {

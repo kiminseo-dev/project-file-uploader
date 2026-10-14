@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= folder.name %></title>
+  </head>
+  <body>
+    <h1><%= folder.name %></h1>
+    <form action="/folders/<%= folder.id %>/upload" method="POST" enctype="multipart/form-data">
+      <label for="file">Choose a file:</label>
+      <input type="file" id="file" name="file" required />
+      <button type="submit">Upload</button>
+    </form>
+
+    <% files.forEach(file => { %>
+      <fieldset>
+        <legend><%= file.originalName %></legend>
+        <button>Download</button>
+        <button>Delete</button>
+      </fieldset>
+    <% }); %>
+  </body>
+</html>

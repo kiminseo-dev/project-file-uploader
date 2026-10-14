@@ -18,7 +18,17 @@ export async function getFolders(req, res) {
     },
   });
 
-  res.render("folders", { folders });
+  const files = await prisma.file.findMany({
+    where: {
+      folder: {
+        userId: req.user.id,
+        isRoot: true,
+      },
+    },
+  });
+  console.log(files);
+
+  res.render("folders", { folders, files });
 }
 
 // creating new folder page
@@ -48,7 +58,7 @@ export async function createFolder(req, res) {
 // get one specific folder linked to :id route
 export async function getFolder(req, res) {
   try {
-    const folder = await prisma.folder.findUnique({
+    const folder = await prisma.folder.findFirst({
       where: {
         // req.params.id as string id is Int
         id: Number(req.params.id),
@@ -61,7 +71,13 @@ export async function getFolder(req, res) {
       return res.status(404).send("Folder not found");
     }
 
-    res.send(`you are in folder ${folder.name}`);
+    const files = await prisma.file.findMany({
+      where: {
+        folderId: folder.id,
+      },
+    });
+
+    res.render("folder", { folder, files });
   } catch (err) {
     console.error(err);
     res.status(500).send("Something went wrong");
@@ -133,3 +149,56 @@ export async function editFolder(req, res) {
     res.status(500).send("Something went wrong");
   }
 }
+
+export async function uploadFolder(req, res) {
+  try {
+    let folder;
+
+    if (req.params.id) {
+      folder = await prisma.folder.findFirst({
+        where: {
+          id: Number(req.params.id),
+          userId: req.user.id,
+        },
+      });
+
+      if (!folder) {
+        return res.status(404).send("Home folder not found");
+      }
+    } else {
+      folder = await prisma.folder.findFirst({
+        where: {
+          userId: req.user.id,
+          isRoot: true,
+        },
+      });
+
+      if (!folder) {
+        return res.status(404).send("Home folder now found");
+      }
+    }
+
+    if (!req.file) {
+      return res.status(400).send("No file uploaded");
+    }
+
+    await prisma.file.create({
+      data: {
+        originalName: req.file.originalname,
+        storedName: req.file.filename,
+        size: req.file.size,
+        folderId: folder.id,
+      },
+    });
+
+    res.redirect(req.params.id ? `/folders/${folder.id}` : "/folders");
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function deleteFile(req, res) {
+  
+}
+
+export async function downloadFile(req, res) {}
