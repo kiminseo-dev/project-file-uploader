@@ -57,7 +57,7 @@ export async function createFolder(req, res) {
     if (err.code === "P2002") {
       return res.render("new-folder", { name: req.body.name });
     }
-    
+
     console.error(err);
     res.status(500).send("Something went wrong");
   }
@@ -107,22 +107,38 @@ export async function deleteFolder(req, res) {
       },
     });
 
+    // check if folder exists
+    if (!folder) {
+      return res.status(404).send("Folder not found");
+    }
+
     // if its the root folder
     if (folder.isRoot) {
       return res.send("root folder cant be deleted");
     }
 
-    await prisma.folder.deleteMany({
+    // files that need to be deleted
+    const files = await prisma.file.findMany({
+      where: {
+        folderId: Number(req.params.id),
+        folder: {
+          userId: req.user.id,
+        },
+      },
+    });
+
+    // deleting files
+    for (const file of files) {
+      const filePath = path.join("uploads", file.storedName);
+      await fs.unlink(filePath);
+    }
+
+    await prisma.folder.delete({
       where: {
         id: Number(req.params.id),
         userId: req.user.id,
       },
     });
-
-    // .deleteMany returns an object if folder.count does not exist
-    if (folder.count === 0) {
-      return res.status(404).send("Folder not found");
-    }
 
     res.redirect("/folders");
   } catch (err) {

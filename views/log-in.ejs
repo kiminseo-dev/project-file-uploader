@@ -13,5 +13,8 @@
       <input id="password" name="password" type="password" required />
       <button type="submit">Log In</button>
     </form>
+    <% if (locals.errorMessage) { %>
+      <p class="error"><%= errorMessage %></p>
+    <% } %>
   </body>
 </html>

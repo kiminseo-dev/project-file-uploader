@@ -8,6 +8,7 @@ import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { Strategy as LocalStrategy } from "passport-local";
 import bcrypt from "bcrypt";
 import "dotenv/config";
+import flash from "connect-flash";
 
 const PORT = process.env.PORT || 3000;
 
@@ -48,6 +49,15 @@ app.use(
 //* this part uses dependency "passport"
 app.use(passport.initialize()); // sets up passport functions
 app.use(passport.session()); // remembers who is logged in from the different requests
+
+// enables flash in express app
+app.use(flash());
+
+app.use((req, res, next) => {
+  // stores errorMessage in locals.  
+  res.locals.errorMessage = req.flash("error")[0]; // first error message
+  next();
+});
 
 //* LocalStrategy is used here
 // provides the way to authenticate a user with username and password

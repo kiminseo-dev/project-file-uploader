@@ -65,5 +65,6 @@ export function authenticateUser(req, res, next) {
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/log-in",
+    failureFlash: true,
   })(req, res, next);
 }
