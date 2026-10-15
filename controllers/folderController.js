@@ -54,7 +54,10 @@ export async function createFolder(req, res) {
 
     res.redirect("/folders");
   } catch (err) {
-    //Todo: add proper error handling
+    if (err.code === "P2002") {
+      return res.render("new-folder", { name: req.body.name });
+    }
+    
     console.error(err);
     res.status(500).send("Something went wrong");
   }

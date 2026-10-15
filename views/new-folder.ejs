@@ -8,8 +8,15 @@
   <body>
     <form action="/folders/new" method="post">
       <label for="name">Name:</label>
-      <input name="name" id="name" type="text" required />
+      <input 
+        name="name" 
+        id="name" 
+        type="text" 
+        value="<%= locals.name ? locals.name : ''%>" 
+        required 
+      />
       <button type="submit">Submit</button>
     </form>
+    <p><%= locals.name ? `${locals.name} folder already exists` : "" %></p>
   </body>
 </html>

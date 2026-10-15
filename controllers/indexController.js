@@ -36,7 +36,7 @@ export async function createUser(req, res) {
         // adding default root folder
         folders: {
           create: {
-            name: "Home",
+            name: "$2b$15$b07ygN9PWUA8brjpD/bQGO",
             isRoot: true,
           }
         }
