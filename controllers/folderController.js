@@ -20,11 +20,13 @@ export async function getFolders(req, res) {
     },
   });
 
+  // all files in the isRoot folder
   const files = await prisma.file.findMany({
     where: {
       folder: {
+        // user must own the folder
         userId: req.user.id,
-        isRoot: true,
+        isRoot: true, // home directory
       },
     },
   });
@@ -72,6 +74,7 @@ export async function getFolder(req, res) {
       return res.status(404).send("Folder not found");
     }
 
+    // files inside the folder
     const files = await prisma.file.findMany({
       where: {
         folderId: folder.id,
@@ -116,7 +119,8 @@ export async function getEditFolderPage(req, res) {
         userId: req.user.id,
       },
     });
-
+   
+    // folder does not exist
     if (!folder) {
       return res.status(404).send("Folder not found");
     }
@@ -140,6 +144,7 @@ export async function editFolder(req, res) {
       },
     });
 
+    // folder does not exist
     if (folder.count === 0) {
       return res.status(404).send("Folder not found");
     }
@@ -151,11 +156,13 @@ export async function editFolder(req, res) {
   }
 }
 
-export async function uploadFolder(req, res) {
+export async function uploadFile(req, res) {
   try {
     let folder;
-
+    
+    // request came with id
     if (req.params.id) {
+      // finding folder by folder id
       folder = await prisma.folder.findFirst({
         where: {
           id: Number(req.params.id),
@@ -163,26 +170,33 @@ export async function uploadFolder(req, res) {
         },
       });
 
+      // folder does not exist
       if (!folder) {
         return res.status(404).send("Home folder not found");
       }
     } else {
+      // request no :folderId
       folder = await prisma.folder.findFirst({
         where: {
           userId: req.user.id,
+          // upload in to root folder
           isRoot: true,
         },
       });
 
+      //! check this
+      // if folder is somehow not found
       if (!folder) {
         return res.status(404).send("Home folder now found");
       }
     }
 
+    // file is not attached to request
     if (!req.file) {
       return res.status(400).send("No file uploaded");
     }
 
+    // saving file location metadata in db
     await prisma.file.create({
       data: {
         originalName: req.file.originalname,
@@ -198,25 +212,31 @@ export async function uploadFolder(req, res) {
   }
 }
 
+// delete file
 export async function deleteFile(req, res) {
+  // file to delete
   const file = await prisma.file.findFirst({
     where: {
+      // find file
       id: Number(req.params.fileId),
       folder: {
+        // user most own the folder that owns the file
         userId: req.user.id,
       },
     },
   });
 
+  // file does not exist
   if (!file) {
     return res.status(404).send("File not found");
   }
 
   // file path name
   const filePath = path.join("uploads", file.storedName);
-  // deletes the physical file
+  // deletes the physical file from the disk
   await fs.unlink(filePath);
 
+  // delete file location name metadata
   await prisma.file.delete({
     where: {
       id: file.id,
@@ -226,20 +246,27 @@ export async function deleteFile(req, res) {
   res.redirect("/folders");
 }
 
+// downloading file
 export async function downloadFile(req, res) {
+  // file to download
   const file = await prisma.file.findFirst({
     where: {
+      // file location
       id: Number(req.params.fileId),
       folder: {
+        // user most own folder that owns file
         userId: req.user.id,
       },
     },
   });
 
+  // file does not exist
   if (!file) {
     return res.status(404).send("File not found");
   }
 
+  // find file path from disk
   const filePath = path.join("uploads", file.storedName);
+  // download the file
   res.download(filePath, file.originalName);
 }

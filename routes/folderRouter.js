@@ -13,10 +13,11 @@ folderRouter.use(folderController.isAuthenticated);
 // getting all folders
 folderRouter.get("/", folderController.getFolders);
 
+// upload file to root director
 folderRouter.post(
   "/upload",
   upload.single("file"), // one file is expected and is saved to req.file
-  folderController.uploadFolder,
+  folderController.uploadFile,
 );
 
 
@@ -34,14 +35,16 @@ folderRouter.post("/:id/delete", folderController.deleteFolder);
 folderRouter.get("/:id/edit", folderController.getEditFolderPage);
 folderRouter.post("/:id/edit", folderController.editFolder);
 
-// upload file
+// upload file into folder
 folderRouter.post(
   "/:id/upload",
   upload.single("file"),
-  folderController.uploadFolder,
+  folderController.uploadFile,
 );
 
+// delete file
 folderRouter.post("/files/:fileId/delete", folderController.deleteFile);
+// download file
 folderRouter.post("/files/:fileId/download", folderController.downloadFile);
 
 export { folderRouter };
