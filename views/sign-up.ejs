@@ -8,15 +8,34 @@
   <body>
     <form action="/sign-up" method="post">
         <label for="name">Name:</label>
-        <input id="name" name="name" type="text" required />
+        <input 
+          id="name" 
+          name="name" 
+          type="text" 
+          value="<%= locals.body ? locals.body.name : "" %>" 
+          required 
+        />
 
         <label for="username">Username:</label>
-        <input id="username" name="username" type="text" required />
+        <input 
+          id="username" 
+          name="username" 
+          type="text" 
+          value="<%= locals.body ? locals.body.username : "" %>"  
+          required 
+        />
 
         <label for="password">Password:</label>
-        <input id="password" name="password" type="password" required />
+        <input 
+          id="password" 
+          name="password" 
+          type="password" 
+          value="<%= locals.body ? locals.body.password : "" %>" 
+          required 
+        />
 
         <button type="submit">Sign Up</button>
     </form>
+    <p><%= locals.body ? `${locals.body.username} is already taken` : ""%></p>
   </body>
 </html>

@@ -38,16 +38,19 @@ export async function createUser(req, res) {
           create: {
             name: "$2b$15$b07ygN9PWUA8brjpD/bQGO",
             isRoot: true,
-          }
-        }
+          },
+        },
       },
     });
 
     res.redirect("/");
   } catch (err) {
+    if (err.code === "P2002") {
+      return res.render("sign-up", { body: req.body });
+    }
+
     console.error(err);
     // server error
-    //Todo: add proper error handling
     res.status(500).send("Something went wrong");
   }
 }
