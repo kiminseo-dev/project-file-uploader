@@ -8,6 +8,7 @@ Folder:
     ✔ Set up folder creation @done(26-10-12 22:21)
 
 ✔ Comment everything @started(26-10-15 11:31) @est(20min) @done(26-10-15 11:50) @lasted(19m1s)
-☐ Logic fixes @started(26-10-15 11:50)
+✔ Logic fixes @started(26-10-15 11:50) @done(26-10-15 12:06) @lasted(16m12s)
 ☐ Error handling
 ☐ Safety checking
+☐ Bug fixes

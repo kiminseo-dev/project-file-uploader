@@ -285,6 +285,7 @@ export async function deleteFile(req, res) {
 
 // downloading file
 export async function downloadFile(req, res) {
+  console.log(req.params.id);
   // file to download
   const file = await prisma.file.findFirst({
     where: {
