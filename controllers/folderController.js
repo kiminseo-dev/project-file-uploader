@@ -20,6 +20,8 @@ export async function getFolders(req, res) {
     },
   });
 
+  const filteredFolders = folders.filter((folder) => !folder.isRoot);
+
   // all files in the isRoot folder
   const files = await prisma.file.findMany({
     where: {
@@ -31,7 +33,7 @@ export async function getFolders(req, res) {
     },
   });
 
-  res.render("folders", { folders, files });
+  res.render("folders", { folders: filteredFolders, files });
 }
 
 // creating new folder page
@@ -74,6 +76,10 @@ export async function getFolder(req, res) {
       return res.status(404).send("Folder not found");
     }
 
+    if (folder.isRoot) {
+      return res.redirect("/folders");
+    }
+
     // files inside the folder
     const files = await prisma.file.findMany({
       where: {
@@ -91,7 +97,19 @@ export async function getFolder(req, res) {
 // deleting a folder
 export async function deleteFolder(req, res) {
   try {
-    const folder = await prisma.folder.deleteMany({
+    const folder = await prisma.folder.findFirst({
+      where: {
+        id: Number(req.params.id),
+        userId: req.user.id,
+      },
+    });
+
+    // if its the root folder
+    if (folder.isRoot) {
+      return res.send("root folder cant be deleted");
+    }
+
+    await prisma.folder.deleteMany({
       where: {
         id: Number(req.params.id),
         userId: req.user.id,
@@ -119,10 +137,15 @@ export async function getEditFolderPage(req, res) {
         userId: req.user.id,
       },
     });
-   
+
     // folder does not exist
     if (!folder) {
       return res.status(404).send("Folder not found");
+    }
+
+    // if the folder is the root folder
+    if (folder.isRoot) {
+      return res.redirect("/folders");
     }
 
     res.render("edit-folder", { folder });
@@ -132,9 +155,22 @@ export async function getEditFolderPage(req, res) {
   }
 }
 
+// editing folder
 export async function editFolder(req, res) {
   try {
-    const folder = await prisma.folder.updateMany({
+    const folder = prisma.folder.findFirst({
+      where: {
+        id: Number(req.params.id),
+        userId: req.user.id,
+      },
+    });
+
+    if (folder.isRoot) {
+      req.redirect("/folders");
+    }
+
+    // edit the folder
+    await prisma.folder.updateMany({
       where: {
         id: Number(req.params.id),
         userId: req.user.id,
@@ -156,10 +192,11 @@ export async function editFolder(req, res) {
   }
 }
 
+// uploading file
 export async function uploadFile(req, res) {
   try {
     let folder;
-    
+
     // request came with id
     if (req.params.id) {
       // finding folder by folder id

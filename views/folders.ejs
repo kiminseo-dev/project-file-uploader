@@ -15,6 +15,7 @@
     </form>
 
     <br>
+    <h3>Folders</h3>
     <% folders.forEach(folder => { %>
         <fieldset>
         <a href="/folders/<%= folder.id %>"><%= folder.name %></a>
@@ -26,7 +27,8 @@
         </form>
         </fieldset>
     <% }); %>
-
+     
+    <h3>Files</h3>
     <% files.forEach(file => { %>
       <fieldset>
         <legend><%= file.originalName %></legend>
